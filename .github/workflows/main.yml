@@ -16,7 +16,11 @@ jobs:
           password: ${{ secrets.REGISTRY_PAT }}
       - name: build and push
         run: |
-          CLEAN_BRANCH=$(echo ${GITHUB_REF_NAME} | sed 's/\//-/g')
+          # Use HEAD_REF if it exists (PR), otherwise use REF_NAME (Push)
+          RAW_BRANCH=${{ github.head_ref || github.ref_name }}
+          # Clean the name: replace slashes and convert to lowercase
+          CLEAN_BRANCH=$(echo $RAW_BRANCH | sed 's/\//-/g' | tr '[:upper:]' '[:lower:]')
           IMAGE_TAG=${CLEAN_BRANCH}-$(date +%s)
-          docker build . -t ${{ secrets.REGISTRY_USER }}/test-react-docker-deploy:$IMAGE_TAG
-          docker push ${{ secrets.REGISTRY_USER }}/test-react-docker-deploy:$IMAGE_TAG
+          REPO=test-react-docker-deploy
+          docker build . -t ${{ secrets.REGISTRY_USER }}/$REPO:$IMAGE_TAG
+          docker push ${{ secrets.REGISTRY_USER }}/$REPO:$IMAGE_TAG
