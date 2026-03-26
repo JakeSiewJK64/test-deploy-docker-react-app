@@ -17,6 +17,6 @@ jobs:
       - name: build and push
         run: |
           CLEAN_BRANCH=$(echo ${GITHUB_REF_NAME} | sed 's/\//-/g')
-          IMAGE_TAG=${CLEAN_BRANCH}$(date +%s)
+          IMAGE_TAG=${CLEAN_BRANCH}-$(date +%s)
           docker build . -t ${{ secrets.REGISTRY_USER }}/test-react-docker-deploy:$IMAGE_TAG
           docker push ${{ secrets.REGISTRY_USER }}/test-react-docker-deploy:$IMAGE_TAG
